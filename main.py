@@ -1,56 +1,50 @@
 from rocket import Rocket
 from simulation import Simulation
-
-from visualization import (
-    plot_trajectory,
-    plot_altitude,
-    plot_velocity
-)
+from visualization import RealTimeVisualizer
 
 
 def main():
 
-    # ROCKET DETAILS
-    mass = 500.0             # kg
-    thrust = 150000.0         # newtons extreme to space
-    launch_angle = 85.0      # degrees
-    burn_time = 12.0         # seconds
-    time_step = 0.01         # seconds
+    # ROCKET PARAMETERS
+    mass = 500.0
+    thrust = 15_000.0
+    burn_time = 12.0
+    launch_angle = 85.0
+
+    drag_coefficient = 0.4
+    area = 0.5
+
+    # Numerical simulation time step
+    time_step = 0.01
 
     # CREATE ROCKET
     rocket = Rocket(
         mass=mass,
         thrust=thrust,
         burn_time=burn_time,
-        launch_angle=launch_angle
+        launch_angle=launch_angle,
+        drag_coefficient=drag_coefficient,
+        area=area
     )
-
 
     # CREATE SIMULATION
     simulation = Simulation(
         rocket=rocket,
-        time_step=0.01
+        time_step=time_step
     )
 
-    # RUN
-    simulation.run()
-
-    # VISUALIZE RESULTS
-    plot_trajectory(
-        simulation.x_points,
-        simulation.y_points
+    # CREATE LIVE VISUALIZER
+    visualizer = RealTimeVisualizer(
+        update_every=10
     )
 
-    plot_altitude(
-        simulation.time_points,
-        simulation.y_points
+    # RUN SIMULATION
+    simulation.run(
+        visualizer=visualizer
     )
 
-    plot_velocity(
-        simulation.time_points,
-        simulation.velocity_y_points
-    )
-
+    # Keep final graph open after simulation ends
+    visualizer.show()
 
 if __name__ == "__main__":
     main()
